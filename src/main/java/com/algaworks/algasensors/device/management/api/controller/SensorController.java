@@ -62,7 +62,7 @@ public class SensorController {
     // O @PathVariable é que alimenta o parâmetro sensorId
     // Ele chega como uma String, mas é convertido para TSID pelo conversor StringToTSIDWebConverter
     @GetMapping("{sensorId}")
-    public SensorOutput getOne(@PathVariable  TSID sensorId) {
+    public SensorOutput getOne(@PathVariable TSID sensorId) {
         Sensor sensor = sensorRepository.findById(new SensorId(sensorId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return convertToModel(sensor);
