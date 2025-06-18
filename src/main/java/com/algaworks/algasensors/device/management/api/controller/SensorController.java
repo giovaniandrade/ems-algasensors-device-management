@@ -1,5 +1,6 @@
 package com.algaworks.algasensors.device.management.api.controller;
 
+import com.algaworks.algasensors.device.management.api.client.SensorMonitoringClient;
 import com.algaworks.algasensors.device.management.api.model.SensorInput;
 import com.algaworks.algasensors.device.management.api.model.SensorOutput;
 import com.algaworks.algasensors.device.management.common.IdGenerator;
@@ -29,6 +30,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class SensorController {
 
     private final SensorRepository sensorRepository;
+    private final SensorMonitoringClient sensorMonitoringClient;
 
     @PutMapping("{sensorId}")
     @ResponseStatus(HttpStatus.OK)
@@ -51,6 +53,9 @@ public class SensorController {
         Sensor sensor = sensorRepository.findById(new SensorId(sensorId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         sensorRepository.delete(sensor);
+
+        // Toda vez que um sensor é excluído, desabilitamos o monitoramento dele
+        sensorMonitoringClient.disableMonitoring(sensorId);
     }
 
     @GetMapping
@@ -92,6 +97,9 @@ public class SensorController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         sensor.setEnabled(true);
         sensorRepository.saveAndFlush(sensor);
+
+        // Toda vez que um sensor é habilitado, habilitamos o monitoramento dele
+        sensorMonitoringClient.enableMonitoring(sensorId);
     }
 
     @PutMapping("/disabled/{sensorId}")
@@ -101,6 +109,9 @@ public class SensorController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         sensor.setEnabled(false);
         sensorRepository.saveAndFlush(sensor);
+
+        // Toda vez que um sensor é desabilitado, desabilitamos o monitoramento dele
+        sensorMonitoringClient.disableMonitoring(sensorId);
     }
 
     private SensorOutput convertToModel(Sensor sensor) {
