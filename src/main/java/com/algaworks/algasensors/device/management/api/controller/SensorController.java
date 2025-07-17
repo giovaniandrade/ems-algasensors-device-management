@@ -42,20 +42,8 @@ public class SensorController {
         sensor.setIp(input.getIp());
         sensor.setProtocol(input.getProtocol());
         sensor.setModel(input.getModel());
-        sensor.setEnabled(input.getEnabled());
         sensor = sensorRepository.saveAndFlush(sensor);
         return convertToModel(sensor);
-    }
-
-    @DeleteMapping("{sensorId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable TSID sensorId) {
-        Sensor sensor = sensorRepository.findById(new SensorId(sensorId))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        sensorRepository.delete(sensor);
-
-        // Toda vez que um sensor é excluído, desabilitamos o monitoramento dele
-        sensorMonitoringClient.disableMonitoring(sensorId);
     }
 
     @GetMapping
@@ -90,25 +78,37 @@ public class SensorController {
         return convertToModel(sensor);
     }
 
-    @PutMapping("/enabled/{sensorId}")
+    @DeleteMapping("{sensorId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable TSID sensorId) {
+        Sensor sensor = sensorRepository.findById(new SensorId(sensorId))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        sensorRepository.delete(sensor);
+
+        // Toda vez que um sensor é excluído, desabilitamos o monitoramento dele
+        sensorMonitoringClient.disableMonitoring(sensorId);
+    }
+
+    @PutMapping("/{sensorId}/enable")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void enable(@PathVariable TSID sensorId) {
         Sensor sensor = sensorRepository.findById(new SensorId(sensorId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         sensor.setEnabled(true);
-        sensorRepository.saveAndFlush(sensor);
+        sensorRepository.save(sensor);
 
         // Toda vez que um sensor é habilitado, habilitamos o monitoramento dele
         sensorMonitoringClient.enableMonitoring(sensorId);
     }
 
-    @PutMapping("/disabled/{sensorId}")
+    // Não concordo muito com essa abordagem
+    @DeleteMapping("/{sensorId}/enable")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void disabled(@PathVariable TSID sensorId) {
+    public void disable(@PathVariable TSID sensorId) {
         Sensor sensor = sensorRepository.findById(new SensorId(sensorId))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         sensor.setEnabled(false);
-        sensorRepository.saveAndFlush(sensor);
+        sensorRepository.save(sensor);
 
         // Toda vez que um sensor é desabilitado, desabilitamos o monitoramento dele
         sensorMonitoringClient.disableMonitoring(sensorId);
