@@ -28,7 +28,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.GATEWAY_TIMEOUT);
 
         // problemDetail.setTitle("Gateway Timeout");
-        problemDetail.setTitle("Erro de comunicação com o serviço remoto");
+        problemDetail.setTitle("Erro de comunicação com o serviço remoto personalizado por Giovani");
         problemDetail.setDetail(e.getMessage());
         problemDetail.setType(URI.create("/erros/gateway-timeout"));
 
@@ -39,7 +39,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public ProblemDetail handler(SensorMonitoringClientBadGatewayException e) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_GATEWAY);
 
-        problemDetail.setTitle("Bad Gateway");
+        problemDetail.setTitle("Bad Gateway personalizado");
         problemDetail.setDetail(e.getMessage());
         problemDetail.setType(URI.create("/erros/bad-gateway"));
 
