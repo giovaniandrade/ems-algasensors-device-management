@@ -16,6 +16,9 @@ public class RestClientFactory {
     private final RestClient.Builder restClientBuilder;
 
     public RestClient temperatureMonitoringRestClient() {
+        // Assim não funcionaria porque não carregas os módulos do Jackson
+        // configurados em: TSIDJacksonConfig
+        // return RestClient.create("http://localhost:8082");
         return restClientBuilder
                 .baseUrl("http://localhost:8082")
                 .requestFactory(generateClientHttpRequestFactory())
