@@ -4,10 +4,11 @@ import com.algaworks.algasensors.device.management.api.client.RestClientFactory;
 import com.algaworks.algasensors.device.management.api.client.SensorMonitoringClient;
 import com.algaworks.algasensors.device.management.api.model.SensorMonitoringOutput;
 import io.hypersistence.tsid.TSID;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
-@Component
+// Comentamos apenas porque agora usamos annotation (@HttpExchange("/api/sensors/{sensorId}/monitoring") na interface SensorMonitoringClient, para registrar o client
+// mas poderia ser excluída mesmo
+// @Component
 public class SensorMonitoringClientImpl implements SensorMonitoringClient {
 
     private final RestClient restClient;
